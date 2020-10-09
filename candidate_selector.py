@@ -1,9 +1,3 @@
-import json
-import requests
-
-from pymatgen import *
-
-import numpy as np
 
 from pymatgen.electronic_structure.plotter import DosPlotter, BSPlotter
 import numpy as np
@@ -22,6 +16,3 @@ with MPRester(api_key="UgRqoHkuZyJEVX2d") as m:
 				print(density)
 
 		print(dos.get_gap())
-		'''dos_plotter = DosPlotter()
-		dos_plotter.add_dos_dict(dos.get_spd_dos())
-		dos_plotter.show()'''

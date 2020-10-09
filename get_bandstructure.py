@@ -10,10 +10,12 @@ from pymatgen.electronic_structure.plotter import DosPlotter, BSPlotter
 
 TiCoO3 = 'mp-19424'
 ID = 'mp-2352'
+
 with MPRester(api_key="UgRqoHkuZyJEVX2d") as m:
 
 		structure = m.get_bandstructure_by_material_id(TiCoO3)
 
+		print(structure.get_band_gap())
 		bands = structure.bands[Spin.up]
 
 		for i, band in enumerate(bands):
