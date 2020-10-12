@@ -11,8 +11,8 @@ Fe = 'mp-13'
 materials_validity = [(TiCoO3, True), (Fe, False), ]
 
 
-lower_band = -.8
-upper_band = 1.2
+lower_band = -1.1
+upper_band = 1.3
 threshold = .3
 
 test_dos = {-2: 1, -1 : .1, 0:.3, 1: 0}
@@ -35,13 +35,13 @@ def get_dos_array(material_id):
 
 	with MPRester(api_key="UgRqoHkuZyJEVX2d") as m:
 
-		dos = m.get_dos_by_material_id(TiCoO3)
+		dos = m.get_dos_by_material_id(material_id)
 		energies = dos.as_dict()['energies']
 		e_fermi = dos.as_dict()['efermi']
 		densities = dos.get_densities()
 
 
-	return {energy - e_fermi : density for energy, density in zip(energies, densities)}
+	return {(energy - e_fermi) : density for energy, density in zip(energies, densities)}
 
 
 def center_dos(dos):
@@ -65,10 +65,12 @@ def is_valid_material(material_id):
 
 
 if __name__ == "__main__":
-	dos = get_dos_array(Fe)
-	dos = center_dos(dos)
 
-	print(is_valid_dos(dos))
-	plt.plot(list(dos.keys()), list(dos.values()))
+
+	dos = get_dos_array(Fe)
+	centered_dos = center_dos(dos)
+
+	print(is_valid_dos(centered_dos))
+	plt.plot(list(dos.values()), list(dos.keys()))
 	plt.show()
 	
