@@ -3,20 +3,18 @@ from pymatgen.electronic_structure.plotter import DosPlotter, BSPlotter
 from pymatgen import *
 import numpy as np
 from matplotlib import pyplot as plt
-
+import random
 
 TiCoO3 = 'mp-19424'
 Fe = 'mp-13'
 
-materials_validity = [(TiCoO3, True), (Fe, False), ]
+mystery = 'mp-770660'
 
+materials_validity = [(TiCoO3, True), (Fe, False), ]
 
 lower_band = -1.1
 upper_band = 1.3
-threshold = .3
-
-test_dos = {-2: 1, -1 : .1, 0:.3, 1: 0}
-
+threshold = .35
 
 #https://stackoverflow.com/questions/15579649/python-dict-to-numpy-structured-array
 def find_nearest(array, value, round_up = True):
@@ -40,7 +38,6 @@ def get_dos_array(material_id):
 		e_fermi = dos.as_dict()['efermi']
 		densities = dos.get_densities()
 
-
 	return {(energy - e_fermi) : density for energy, density in zip(energies, densities)}
 
 
@@ -61,16 +58,22 @@ def is_valid_dos(dos):
 	return True
 
 def is_valid_material(material_id):
-	return is_valid_dos(get_dos_array(material_id))
+	return is_valid_dos(center_dos(get_dos_array(material_id)))
 
 
 if __name__ == "__main__":
 
+	with open('database.txt', 'r')as d:
+		with open('candidates.txt', 'w')  as c:
+		
+			materials = [next(d) for x in range(10000)]
 
-	dos = get_dos_array(Fe)
-	centered_dos = center_dos(dos)
+			random.shuffle(materials)
 
-	print(is_valid_dos(centered_dos))
-	plt.plot(list(dos.values()), list(dos.keys()))
-	plt.show()
-	
+			for ID in materials[:1000]:
+				ID = ID.rstrip()
+				dos = center_dos(get_dos_array(ID))
+				is_valid = is_valid_dos(dos)
+
+				if is_valid:
+					c.write(f'{ID}\n')
