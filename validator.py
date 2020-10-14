@@ -11,8 +11,8 @@ if __name__ == "__main__":
 	with open('candidates.txt', 'r') as c:
 		with MPRester('UgRqoHkuZyJEVX2d') as m:
 			for ID in c.readlines():
-				ID = ID.rstrip()
 
+				ID = ID.rstrip()
 
 				name = m.query(criteria={'task_id':ID}, properties=['pretty_formula'])[0]['pretty_formula']
 				dos = get_candidates.center_dos(get_candidates.get_dos_array(ID))
