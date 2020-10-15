@@ -13,7 +13,7 @@ if __name__ == "__main__":
 			for ID in c.readlines():
 
 				ID = ID.rstrip()
-
+				#print the formula and bandplot for given candidate materials
 				name = m.query(criteria={'task_id':ID}, properties=['pretty_formula'])[0]['pretty_formula']
 				dos = get_candidates.center_dos(get_candidates.get_dos_array(ID))
 				plt.plot(list(dos.values()), list(dos.keys()))

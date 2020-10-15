@@ -1,6 +1,8 @@
 from pymatgen import MPRester
 from pymatgen.electronic_structure.plotter import BSPlotter
 
+
+#
 if __name__ == "__main__":
     MAPI_KEY = "" #put your api key here as a string
     MP_ID = ""   # enter material id  ex: mp-19017
