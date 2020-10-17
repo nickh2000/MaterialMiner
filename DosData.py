@@ -36,29 +36,29 @@ class DosData:
     def display_dos_data(self):
         print("The Fermi energy is {}".format(self.dos_obj.efermi))
 
-        par = ["energy", "total_dos", "up_dos", "down_dos"]
+        par = ["energy", "total_dos", "up_dos", "down_dos"] # arranges a table format for energy, total-dos, spin-up/down dos as the main parameters. 
         
-        up_dos = self.dos_obj.get_densities(Spin.up)
-        down_dos = self.dos_obj.get_densities(Spin.down)
+        up_dos = self.dos_obj.get_densities(Spin.up) #define spin-up dos
+        down_dos = self.dos_obj.get_densities(Spin.down) #define spin-down dos
 
-        element_dos = self.dos_obj.get_element_dos()
+        element_dos = self.dos_obj.get_element_dos()   #   defines the total-dos for the specific elements involved
         element_symbols = [e.symbol for e in element_dos]
-        par.extend(["{}_dos".format(e) for e in element_symbols])
+        par.extend(["{}_dos".format(e) for e in element_symbols]) 
 
-        orbital_dos = self.dos_obj.get_spd_dos()
+        orbital_dos = self.dos_obj.get_spd_dos() #  defines orbital dos parameter
         orbital_symbols = [o for o in orbital_dos]
-        par.extend(["{}_dos".format(o) for o in orbital_symbols])
+        par.extend(["{}_dos".format(o) for o in orbital_symbols]) #adds the orbital-dos to the array for all correspoding energies 
 
-        print ('#'.join(par)) 
+        print ('#'.join(par))  # prints the header for dos data
 
-        for i, energy in enumerate(self.energies):
-            data = [energy, self.dos_array[energy], up_dos[i], down_dos[i]]
+        for i, energy in enumerate(self.energies): 
+            data = [energy, self.dos_array[energy], up_dos[i], down_dos[i]]  #specifies the complete dos data in the new array 
             for e in element_symbols:
-                data.append(element_dos[Element(e)].get_densities()[i])  
+                data.append(element_dos[Element(e)].get_densities()[i])   #adds element-dos parameters to the array
             for o in orbital_symbols:
-                data.append(orbital_dos[o].get_densities()[i]) 
+                data.append(orbital_dos[o].get_densities()[i])  #adds orbital-dos parameters to the array
 
-            print ('#'.join([str(d) for d in data]))
+            print ('#'.join([str(d) for d in data])) # prints the complete dos data-set for all corresponing energies 
 
     #outputs a density of states for energies within the defined bounds
     def center_dos(self, upper_band, lower_band):
