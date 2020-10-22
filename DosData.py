@@ -32,7 +32,6 @@ class DosData:
             #print the formula and bandplot for given candidate materials
             return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
 
-
     def display_dos_data(self):
         print("The Fermi energy is {}".format(self.dos_obj.efermi))
 
@@ -87,44 +86,83 @@ class DosData:
         #get bandstructure array for material
         return structure.bands[Spin.up]
 
-    def get_width_bounds(self):
 
-        for i in np.arange(0, max_width, precision):
-            width_upper = self.energies[find_nearest_energy(self.energies, i)]
-            if self.dos_array[width_upper] == 0:
-                break;
+    def get_bounds(self):
 
-        for i in np.arange(0, -max_width, -precision):
-            width_lower = self.energies[find_nearest_energy(self.energies, i)]
-            if [width_lower] == 0:
-                break;
-        return width_upper, width_lower       
+        fermi_index = find_nearest_energy(self.energies, 0, 1)
 
-    def get_all_bounds(self):
+        max_index = find_nearest_energy(self.energies, max_bound, 0)
 
-        upper_width, lower_width = self.get_width_bounds()
+        min_index = find_nearest_energy(self.energies, -max_bound, 2)
+        
+        upper_width = max_bound
+        lower_width = -max_bound
+        upper_width_index = max_index
+        lower_width_index = min_index
+        lower_gap = 0
+        upper_gap = 0
 
-        for i in np.arange(upper_width + precision, max_bound, precision):
-            upper_gap = self.energies[find_nearest_energy(self.energies, i)]
-            if self.dos_array[upper_gap] != 0:
+        for i in range(fermi_index, max_index):
+            if self.densities[i] == 0:
+                upper_width = ((int)(self.energies[i - 1] / precision)) * precision
+                upper_width_index = i - 1
                 break
-        for i in np.arange(lower_width - precision, -max_bound, -precision):
 
-            lower_gap = self.energies[find_nearest_energy(self.energies, i)]
-            if self.dos_array[lower_gap] != 0:
+        for i in np.arange(fermi_index - 1, min_index, -1):
+            if self.densities[i] == 0:
+                lower_width = ((int)(self.energies[i] / precision)) * precision
+                lower_width_index = i
                 break
-        return upper_width, lower_width, upper_gap, lower_gap 
+
+        if self.densities[fermi_index] == 0:
+            upper_width = 0
+            upper_gap = max_bound
+        if self.densities[fermi_index - 1] == 0:
+            lower_width = 0
+            lower_gap = max_bound
+
+        #handle the gaps
+        for energy in self.energies[upper_width_index + 1 : max_index]:
+            if self.dos_array[energy] != 0:
+                upper_gap = round(((int)(energy / precision)) * precision, 4)
+                break
+
+        for energy in reversed(self.energies[min_index: lower_width_index]):
+            if self.dos_array[energy] != 0:
+                lower_gap = round(((int)(energy / precision) - 1 ) * precision, 4)
+                break
+
+
+
+        return upper_width, lower_width, upper_gap, lower_gap
+
+
+    def plot_dos(self, upper, lower):
+        centered_array = self.center_dos(upper, lower)
+        plt.plot(list(centered_array.values()), list(centered_array.keys()))
+        plt.ylabel(self.get_formula())
+        plt.show()
+
+    def get_parameters(self):
+        
+        bounds = np.array(self.get_bounds())
+        
+        max_width = bounds[np.argmax(np.abs(bounds[:2]))]
+
+        min_gap = bounds[np.argmin(np.abs(bounds[2:])) + 2]
+
+        return np.abs([max_width, min_gap])
 
 
 #https://stackoverflow.com/questions/15579649/python-dict-to-numpy-structured-array
-def find_nearest_energy(array, value, round_up = True):
+def find_nearest_energy(array, value, round_up = 0):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     
     #closest value less than desired
-    if round_up and array[idx] < value :
+    if round_up == 1 and array[idx] < value :
         return idx + 1
-    elif not round_up and array[idx] > value:
+    elif round_up == 2 and array[idx] > value:
         return idx - 1
     else:
         return idx

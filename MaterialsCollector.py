@@ -48,7 +48,7 @@ def analyze_candidates():
 				ID = ID.rstrip()
 				DOS = DosData(ID)
 				
-				centered_array  = DOS.center_dos(test_upper_gap, test_lower_gap)
+				centered_array  = DOS.center_dos(10, -10)
 				plt.plot(list(centered_array.values()), list(centered_array.keys()))
 				plt.ylabel(DOS.get_formula())
 				plt.show()
