@@ -1,7 +1,11 @@
 from pymatgen import *
 import random
 from DosData import *
-
+import requests
+import json
+import pandas as pd
+from sqlalchemy import create_engine
+import sqlite3
 
 test_upper_gap = 1.3
 test_lower_gap = -1.1
@@ -53,5 +57,25 @@ def analyze_candidates():
 				plt.ylabel(DOS.get_formula())
 				plt.show()
 
+def compile_dos():
+	with open('database.txt', 'r') as d:
+		materials = d.readlines()
+		chunk = []
+		for i, ID in enumerate(materials):
+			ID = ID.rstrip()
+			r = requests.get(f'https://www.materialsproject.org/rest/v2/materials/{ID}/vasp/dos?API_KEY={API_KEY}')
+			r = r.json()['response'][0]['dos']
+			energies =list(r['energies'])
+			densities = list(r['densities']['1'])
+			efermi = r['efermi']
+			chunk.append([ID, energies, densities, efermi])
+			if not i % 1000:
+				df = pd.DataFrame(chunk, columns = ['ID', 'Energies', 'Densities', 'efermi'])
+				df.set_index("ID")
+				print(f'Computed entries: {i}')
+				chunk = []
+				df.to_csv('dos.csv')
+
 if __name__ == '__main__':
-	analyze_candidates()
+	compile_dos()
+	

@@ -13,19 +13,24 @@ max_bound = 5
 precision = .015
 
 class DosData:
-    def __init__(self, material_id):
-        with MPRester(API_KEY) as m:
-            self.dos_obj = m.get_dos_by_material_id(material_id)
+    
+    def __init__(self, arg):
+        if isinstance(arg, dict):
+            self.dos_dict = arg
+            self.material_ID = self.dos_dict['ID']
+            self.densities = self.dos_dict['densities']
+        if isinstance(arg, str):
+            with MPRester(API_KEY) as m:
+                self.dos_dict = m.get_dos_by_material_id(material_id).as_dict()
+                self.densities = self.dos_dict['densities']['1']
+                self.material_id = material_id
 
-        self.material_id = material_id
+        self.efermi = self.dos_dict['efermi']
 
-        self.efermi = self.dos_obj.efermi
-
-        self.energies = np.subtract(self.dos_obj.energies, self.efermi)
-        
-        self.densities = self.dos_obj.get_densities()
+        self.energies = np.subtract(self.dos_dict['energies'], self.efermi)
         
         self.dos_array = {energy : density for energy, density in zip(self.energies, self.densities)}
+
 
     def get_formula(self):
         with MPRester(API_KEY) as m:
@@ -119,17 +124,17 @@ class DosData:
             upper_gap = max_bound
         if self.densities[fermi_index - 1] == 0:
             lower_width = 0
-            lower_gap = max_bound
+            lower_gap = -max_bound
 
         #handle the gaps
         for energy in self.energies[upper_width_index + 1 : max_index]:
+            upper_gap = round(((int)(energy / precision)) * precision, 4)
             if self.dos_array[energy] != 0:
-                upper_gap = round(((int)(energy / precision)) * precision, 4)
                 break
 
         for energy in reversed(self.energies[min_index: lower_width_index]):
+            lower_gap = round(((int)(energy / precision) - 1 ) * precision, 4)
             if self.dos_array[energy] != 0:
-                lower_gap = round(((int)(energy / precision) - 1 ) * precision, 4)
                 break
 
 

@@ -22,12 +22,10 @@ def plot_database():
 	with open('database.txt', 'r') as d:
 		materials = d.readlines()
 		random.shuffle(materials)
-		for ID in materials[:1000]:
+		for ID in materials:
 			ID = ID.rstrip()
 			dos = DosData(ID)
-
 			width, gap = dos.get_parameters()
-			
 			data[round(width / precision), round(gap / precision)] += 1 
 
 		fig = plt.figure()
