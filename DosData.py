@@ -2,6 +2,7 @@ from pymatgen import MPRester, Spin, Element
 from pymatgen import *
 import numpy as np
 from matplotlib import pyplot as plt
+import pandas as pd
 
 TiCoO3 = 'mp-19424'
 Fe = 'mp-13'
@@ -10,11 +11,19 @@ API_KEY = 'UgRqoHkuZyJEVX2d'
 
 max_width = 2
 max_bound = 5
-precision = .015
+precision = .15
 
 class DosData:
     
     def __init__(self, arg):
+
+        if isinstance(arg, pd.Series):
+            self.efermi = arg['efermi']
+            self.energies = np.array(arg['Energies'][1:-1].split(', ')).astype(np.float)
+            self.energies = np.subtract(self.energies, self.efermi)
+            self.densities = np.array(arg['Densities'][1:-1].split(', ')).astype(np.float)
+            self.ID = arg['ID']
+
         if isinstance(arg, dict):
             self.dos_dict = arg
             self.material_ID = self.dos_dict['ID']
@@ -24,10 +33,6 @@ class DosData:
                 self.dos_dict = m.get_dos_by_material_id(material_id).as_dict()
                 self.densities = self.dos_dict['densities']['1']
                 self.material_id = material_id
-
-        self.efermi = self.dos_dict['efermi']
-
-        self.energies = np.subtract(self.dos_dict['energies'], self.efermi)
         
         self.dos_array = {energy : density for energy, density in zip(self.energies, self.densities)}
 
@@ -145,7 +150,7 @@ class DosData:
     def plot_dos(self, upper, lower):
         centered_array = self.center_dos(upper, lower)
         plt.plot(list(centered_array.values()), list(centered_array.keys()))
-        plt.ylabel(self.get_formula())
+        
         plt.show()
 
     def get_parameters(self):

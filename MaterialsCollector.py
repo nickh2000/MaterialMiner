@@ -61,7 +61,7 @@ def compile_dos():
 	with open('database.txt', 'r') as d:
 		materials = d.readlines()
 		chunk = []
-		for i, ID in enumerate(materials):
+		for i, ID in enumerate(materials[41001:]):
 			ID = ID.rstrip()
 			r = requests.get(f'https://www.materialsproject.org/rest/v2/materials/{ID}/vasp/dos?API_KEY={API_KEY}')
 			r = r.json()['response'][0]['dos']
@@ -69,13 +69,11 @@ def compile_dos():
 			densities = list(r['densities']['1'])
 			efermi = r['efermi']
 			chunk.append([ID, energies, densities, efermi])
-			if not i % 1000:
+			if not i % 1000 and i != 0:
 				df = pd.DataFrame(chunk, columns = ['ID', 'Energies', 'Densities', 'efermi'])
-				df.set_index("ID")
 				print(f'Computed entries: {i}')
 				chunk = []
-				df.to_csv('dos.csv')
+				df.to_csv('dos.csv', mode='a', header=False)
 
 if __name__ == '__main__':
 	compile_dos()
-	
