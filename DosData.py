@@ -22,7 +22,7 @@ class DosData:
             self.energies = np.array(arg['Energies'][1:-1].split(', ')).astype(np.float)
             self.energies = np.subtract(self.energies, self.efermi)
             self.densities = np.array(arg['Densities'][1:-1].split(', ')).astype(np.float)
-            self.ID = arg['ID']
+            self.material_id = arg['ID']
 
         if isinstance(arg, dict):
             self.dos_dict = arg
@@ -30,9 +30,11 @@ class DosData:
             self.densities = self.dos_dict['densities']
         if isinstance(arg, str):
             with MPRester(API_KEY) as m:
-                self.dos_dict = m.get_dos_by_material_id(material_id).as_dict()
+                self.dos_dict = m.get_dos_by_material_id(arg).as_dict()
                 self.densities = self.dos_dict['densities']['1']
-                self.material_id = material_id
+                self.efermi = self.dos_dict['efermi']
+                self.energies = np.subtract(self.dos_dict['energies'], self.efermi)
+                self.material_id = arg
         
         self.dos_array = {energy : density for energy, density in zip(self.energies, self.densities)}
 
@@ -142,8 +144,6 @@ class DosData:
             if self.dos_array[energy] != 0:
                 break
 
-
-
         return upper_width, lower_width, upper_gap, lower_gap
 
 
@@ -162,7 +162,11 @@ class DosData:
         min_gap = bounds[np.argmin(np.abs(bounds[2:])) + 2]
 
         return np.abs([max_width, min_gap])
-
+    def get_magmom(self):
+        with MPRester(API_KEY) as m:
+            structure = mpr.get_structure_by_material_id(self.material_id)
+            magmoms = structure.site_properties['magmom'] #compiles all the magnetic momnets into an array 
+        return magmoms #return the magmom array 
 
 #https://stackoverflow.com/questions/15579649/python-dict-to-numpy-structured-array
 def find_nearest_energy(array, value, round_up = 0):
