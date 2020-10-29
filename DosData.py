@@ -11,7 +11,7 @@ API_KEY = 'UgRqoHkuZyJEVX2d'
 
 max_width = 2
 max_bound = 5
-precision = .15
+precision = .015
 
 class DosData:
     

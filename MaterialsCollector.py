@@ -167,5 +167,39 @@ def store_candidates():
 				if not r%1000:
 					print(f'{c*chunksize + r} entries processed')
 
+def create_training_data():
+
+	#setup headers
+	df = pd.DataFrame(columns = ['ID', 'Formula', 'Is_Candidate'])
+	df.to_csv('training_data.csv')
+
+	#size of chunks gathered from CSV file
+	chunksize = 5000
+
+	#open the CSV file into chunks
+	reader = pd.read_csv('dos.csv', chunksize=chunksize)
+
+	#process each chunk
+	for c, chunk in enumerate(itertools.islice(reader, 10)):
+
+		formulas = MPRester(API_KEY).query(criteria={'task_id': {'$in': list(chunk['ID'])}}, properties=['pretty_formula', 'task_id'])
+		currentChunk = []
+
+		for i, entry in enumerate(formulas):
+			row = chunk.loc[chunk['ID'] == entry['task_id']]
+			newEntry = {}
+			newEntry['ID'] = entry['task_id']
+			newEntry['Formula'] = entry['pretty_formula']
+			newEntry['Is_Candidate'] = DosData(row.squeeze()).is_valid(test_upper_gap, test_lower_gap, test_width)
+			currentChunk.append(newEntry)
+
+			if not i%100:
+				print(f'{c*chunksize + i} Computeted entries')
+
+		df = pd.DataFrame(currentChunk, columns = ['ID', 'Formula', 'Is_Candidate'])
+		df.to_csv('training_data.csv', mode='a', header=False)
+
+
+
 if __name__ == '__main__':
-	analyze_candidates()
+	create_training_data()
