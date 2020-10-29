@@ -167,6 +167,11 @@ class DosData:
             structure = mpr.get_structure_by_material_id(self.material_id)
             magmoms = structure.site_properties['magmom'] #compiles all the magnetic momnets into an array 
         return magmoms #return the magmom array 
+    
+    def verify_magnetic(self): 
+        
+        return any(map(abs, self.structure.site_properties["magmom"])) #returns true if magnetic moment is present 
+
 
 #https://stackoverflow.com/questions/15579649/python-dict-to-numpy-structured-array
 def find_nearest_energy(array, value, round_up = 0):
