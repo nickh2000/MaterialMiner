@@ -6,6 +6,9 @@ import pandas as pd
 import itertools
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import periodictable 
+import json
+
 
 test_upper_gap = 1.3
 test_lower_gap = -1.1
@@ -161,8 +164,11 @@ def store_candidates():
 			for r, (index, row) in enumerate(chunk.iterrows()):
 				dos = DosData(row)
 
-				if dos.is_valid(test_upper_gap, test_lower_gap, test_width):
-					f.write(f'{dos.material_id}\n')
+				for offset in np.arange(0, -5, -.1):
+					#test for thin-width at various energy levels
+					if dos.has_isolated_band(test_upper_gap, test_lower_gap, test_width, offset):
+						f.write(f'{dos.material_id}\n')
+						break
 
 				if not r%1000:
 					print(f'{c*chunksize + r} entries processed')
@@ -201,5 +207,23 @@ def create_training_data():
 
 
 
+def elements_in_candidates():
+	elementDict = {}
+	elementDict = {str(element): 0 for element in periodictable.elements}
+	elementDict['NumCandidates'] = 0
+	with open("candidates.txt") as f:
+		materials = [material.rstrip() for material in f.readlines()]
+		response = MPRester(API_KEY).query(criteria={'task_id': {'$in': list(materials)}}, properties=['elements'])
+
+		for material in response:
+			elements = material['elements']
+			for element in elements:
+				elementDict[element] += 1
+			elementDict['NumCandidates'] += 1
+
+	json.dump(elementDict, open('elements.json', 'w+'), indent = 4)
+
 if __name__ == '__main__':
-	create_training_data()
+	elements = json.load(open('elements.json', 'r'))
+	sorted_elements = sorted(elements.items(), key = lambda x: x[1], reverse = True)
+	print(sorted_elements)

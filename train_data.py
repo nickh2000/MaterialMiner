@@ -52,6 +52,8 @@ def preprocess_data():
 	reader = pd.read_csv('training_data.csv')
 
 	
+
+	#shuffle data and seperate labels and candidates
 	formulas = list(reader['Formula'].to_numpy())
 	labels = list(reader['Is_Candidate'].to_numpy().astype(int))
 	data = list(zip(formulas, labels))
@@ -61,8 +63,6 @@ def preprocess_data():
 	formulas, labels = zip(*data)
 	formulas = list(formulas)
 	labels = list(labels)
-
-
 
 	parsed_formulas = []
 	for formula in formulas:
@@ -90,7 +90,6 @@ def preprocess_data():
 	testing_sequences = token.texts_to_sequences(testing_formulas)
 	testing_sequences = tf.keras.preprocessing.sequence.pad_sequences(testing_sequences)
 
-
 	model = tf.keras.Sequential([
     tf.keras.layers.Embedding(len(token.word_index), 16, input_length = len(testing_sequences[0])),
     tf.keras.layers.GlobalAveragePooling1D(),
@@ -105,5 +104,6 @@ def preprocess_data():
 	num_epochs = 30
 	history = model.fit(training_sequences, training_labels, epochs=num_epochs, validation_data=(testing_sequences, testing_labels), verbose=2)
 
+
 if __name__ == '__main__':
-	preprocess_data()
+	print(chemparse.parse_formula('H2((CO2)2SO4)'))

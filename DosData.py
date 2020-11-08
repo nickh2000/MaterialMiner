@@ -81,15 +81,23 @@ class DosData:
 
 
     #determines whether the given DOS is sufficiently isolated
-    def is_valid(self, upper_band, lower_band, width):
+    def has_isolated_band(self, upper_band, lower_band, width, offset):
 
-        dos = self.center_dos(upper_band, lower_band)
+        dos = self.center_dos(upper_band + offset, lower_band + offset)
 
         for energy, density in dos.items():
-            #if the material has densities far enough away from the fermi level, it is not a candidate
-            if density != 0 and abs(energy) > width:
+            #if the material has densities above or below the spagethii-band widthl, it is not a candidate
+            if density != 0 and abs(energy - offset) > width:
                 return False
-        return True
+
+        dosAtWidth = self.center_dos(.1 + offset, -.1 + offset)
+
+        #if theres an occupied energy state within the spaghetti width, return True
+        for energy, density in dosAtWidth.items():
+            if density != 0:
+                return True
+
+        return False
 
     def get_kpoints(self):
         with MPRester() as m:
