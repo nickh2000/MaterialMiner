@@ -4,7 +4,7 @@ from pymatgen.analysis.structure_analyzer import SpacegroupAnalyzer
 from pymatgen.ext.matproj import TaskType 
 import numpy as np
 
-class enforced_semi_metals:
+class ESM:
 
     def __init__(self, entry): 
         if isinstance(entry, dict):
@@ -71,7 +71,7 @@ class enforced_semi_metals:
                      return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
-    def Amphicosm_1(self):
+    def amphicosm_1(self):
         amp_sg_1 = [7,13,14,26,27,28,30,31,32,34,39,41,48,49,50,51,53,55,58,59,64,67,68,85,86,100,101,102,103,104,106,116,117,118,124,125,126,127,128,129,132,133,134,135,136,137,201,222,224]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -83,7 +83,7 @@ class enforced_semi_metals:
 
             else:
                 pass
-    def Amphicosm_2(self):
+    def amphicosm_2(self):
         amp_sg_2 = [9,15,36,37,40,41,43,45,46,63,64,66,68,70,72,73,74,88,103,104,105,106,108,109,110,112,114,120,122,124,126,128,131,133,135,137,140,141,142,158,159,161,163,165,167,184,185,186,188,190,192,193,194,203,206,218,219,220,222,223,226,227,228,230]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -95,7 +95,7 @@ class enforced_semi_metals:
 
             else:
                 pass
-    def Tetracosm_1(self):
+    def tetracosm_1(self):
         tet_sg_1 = [76,78,91,92,95,96,212,213]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -107,7 +107,7 @@ class enforced_semi_metals:
 
             else:
                 pass 
-    def Tetracosm_2(self):
+    def tetracosm_2(self):
         tet_sg_2 = [77,84,86,93,94,101,102,105,106,131,132,133,134,135,136,137.208,223,224]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -119,7 +119,7 @@ class enforced_semi_metals:
             else:
                 pass 
 
-    def Tetracosm_3(self):
+    def tetracosm_3(self):
         tet_sg_3 = [80,88,98,109,110,141,142,210,214,227,228,230]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -130,7 +130,7 @@ class enforced_semi_metals:
                      return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
-    def Tricosm(self):
+    def tricosm(self):
         tri_sg = [144,145,151,152,153,154,171,172,180,181]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -141,7 +141,7 @@ class enforced_semi_metals:
                      return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
-    def Hexacosm_1(self):
+    def hexacosm_1(self):
         hex_sg_1 = [169,170,178,179]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -153,7 +153,7 @@ class enforced_semi_metals:
             else:
                 pass
 
-    def Hexacosm_2(self):
+    def hexacosm_2(self):
         hex_sg_2 = [171,172,180,181]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -165,7 +165,7 @@ class enforced_semi_metals:
             else:
                 pass
 
-    def Hexacosm_3(self):
+    def hexacosm_3(self):
         hex_sg_3 = [173,176,182,185,186,193,194]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -177,7 +177,7 @@ class enforced_semi_metals:
             else:
                 pass
 
-    def Amphidicosm_1(self):
+    def amphidicosm_1(self):
         amph_sg_1 = [29,54,57,60,61,205]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
@@ -188,7 +188,7 @@ class enforced_semi_metals:
                      return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
-    def Amphicosm_2(self):
+    def amphicosm_2(self):
         amph_sg_2 = [33,52,56,60,62,130,138]
         with MPRester() as m:
             sg = m.get_space_group_number(self.material_id)
