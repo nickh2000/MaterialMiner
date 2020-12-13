@@ -43,7 +43,7 @@ class enforced_semi_metals:
             if sg in (dicosm_sg):
                 check = electrons % 8
                 if (check % 2 == 0): 
-                    return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                    return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula']) 
 
             else:
                 pass 
@@ -56,7 +56,7 @@ class enforced_semi_metals:
             if sg in (didicosm_sg_1):
                 check = electrons % 8
                 if (check % 2 == 0): 
-                    return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                    return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
 
@@ -68,7 +68,7 @@ class enforced_semi_metals:
             if sg in (didicosm_sg_2):
                  check = electrons % 4
                  if (check % 2 == 0): 
-                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
     def Amphicosm_1(self):
@@ -79,7 +79,7 @@ class enforced_semi_metals:
             if sg in (amp_sg_1):
                  check = electrons % 4
                  if (check % 2 == 0): 
-                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
 
             else:
                 pass
@@ -103,7 +103,7 @@ class enforced_semi_metals:
             if sg in (tet_sg_1):
                  check = electrons % 8
                  if (check % 2 == 0): 
-                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
 
             else:
                 pass 
@@ -115,7 +115,9 @@ class enforced_semi_metals:
             if sg in (tet_sg_2):
                 check = electrons % 4
                 if (check % 2 == 0): 
-                    return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                    return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
+            else:
+                pass 
 
     def Tetracosm_3(self):
         tet_sg_3 = [80,88,98,109,110,141,142,210,214,227,228,230]
@@ -125,7 +127,7 @@ class enforced_semi_metals:
             if sg in (tet_sg_3):
                  check = electrons % 4
                  if (check % 2 == 0): 
-                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
     def Tricosm(self):
@@ -136,7 +138,7 @@ class enforced_semi_metals:
             if sg in (tri_sg):
                  check = electrons % 6
                  if (check % 2 == 0): 
-                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
     def Hexacosm_1(self):
@@ -147,7 +149,7 @@ class enforced_semi_metals:
             if sg in (hex_sg_1):
                  check = electrons % 12
                  if (check % 2 == 0): 
-                    return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                    return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
 
@@ -159,7 +161,7 @@ class enforced_semi_metals:
             if sg in (hex_sg_2):
                  check = electrons % 6
                  if (check % 2 == 0):
-                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
 
@@ -171,7 +173,7 @@ class enforced_semi_metals:
             if sg in (hex_sg_3):
                  check = electrons % 4
                  if (check % 2 == 0): 
-                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
 
@@ -183,7 +185,7 @@ class enforced_semi_metals:
             if sg in (amph_sg_1):
                  check = electrons % 8
                  if (check % 2 == 0): 
-                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])
             else:
                 pass
     def Amphicosm_2(self):
@@ -194,7 +196,7 @@ class enforced_semi_metals:
             if sg in (amph_sg_2):
                  check = electrons % 8
                  if (check % 2 == 0): 
-                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula'])[0]['pretty_formula']
+                     return m.query(criteria={'task_id':self.material_id}, properties=['pretty_formula']) 
             else:
                 pass
 
