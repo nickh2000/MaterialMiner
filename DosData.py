@@ -193,12 +193,4 @@ def find_nearest_energy(array, value, round_up = 0):
         return idx - 1
     else:
         return idx
-
-
-if __name__ == "__main__":
-
-    material_id = "mp-720338" # enter mp key
-
-    dos = DosData(material_id)
-
-    dos.display_dos_data()
+    

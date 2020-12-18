@@ -164,6 +164,7 @@ def store_candidates():
 		#open the CSV file into chunks
 		reader = pd.read_csv('dos.csv', chunksize=chunksize)
 
+
 		#process each chunk
 		for c, chunk in enumerate(reader):
 			#process each data entry in a chunk (a pd.Series row object)
@@ -191,8 +192,9 @@ def create_training_data():
 	#open the CSV file into chunks
 	reader = pd.read_csv('dos.csv', chunksize=chunksize)
 
+	candidates = [m.rstrip() for m in open('candidates.txt', 'r').readlines()]
 	#process each chunk
-	for c, chunk in enumerate(itertools.islice(reader, 10)):
+	for c, chunk in enumerate(reader):
 
 		formulas = MPRester(API_KEY).query(criteria={'task_id': {'$in': list(chunk['ID'])}}, properties=['pretty_formula', 'task_id'])
 		currentChunk = []
@@ -202,7 +204,7 @@ def create_training_data():
 			newEntry = {}
 			newEntry['ID'] = entry['task_id']
 			newEntry['Formula'] = entry['pretty_formula']
-			newEntry['Is_Candidate'] = DosData(row.squeeze()).is_valid(test_upper_gap, test_lower_gap, test_width)
+			newEntry['Is_Candidate'] = entry['task_id'] in candidates
 			currentChunk.append(newEntry)
 
 			if not i%100:
@@ -290,7 +292,7 @@ def plot_periodic_table():
 
 	show(p)
 
-def clean_dos():
+def update_dos():
 	with open('database.txt') as d:
 
 		reader = pd.read_csv('dos.csv', chunksize = 5000)
@@ -325,4 +327,5 @@ def clean_dos():
 
 
 if __name__ == '__main__':
-	plot_periodic_table()
+
+	analyze_candidates()
