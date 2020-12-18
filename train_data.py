@@ -6,6 +6,13 @@ import chemparse
 import tensorflow as tf
 import random
 
+
+
+'''This program is for training a machine learning model using the mined materials data '''
+
+
+
+
 #converts a chemical formula to an array
 def parse_formula(formula):
 	array = []

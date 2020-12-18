@@ -13,6 +13,12 @@ max_width = 2
 max_bound = 5
 precision = .015
 
+
+
+'''Class containing information for a material's density of states'''
+
+
+
 class DosData:
     
     def __init__(self, arg):

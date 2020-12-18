@@ -16,9 +16,18 @@ import bokeh.palettes
 from bokeh.models import ColorBar
 import math
 
+
+
+
+'''This program contains all functions relating to collecting materials from the MaterialsProject based on different properties '''
+
+
+
 test_upper_gap = 1.3
 test_lower_gap = -1.1
 test_width = .35
+
+
 
 API_KEY = 'UgRqoHkuZyJEVX2d'
 
@@ -49,6 +58,7 @@ def find_candidates_by_material_id(num):
 				#store the material if it is valid
 				if DOS.is_valid(test_upper_gap, test_upper_gap, test_width):
 					c.write(f'{ID}\n')
+
 
 #plot the DOS of each material in candidates.txt
 def analyze_candidates():
@@ -292,6 +302,8 @@ def plot_periodic_table():
 
 	show(p)
 
+
+#adds materials that are not already present to database.txt
 def update_dos():
 	with open('database.txt') as d:
 
@@ -325,7 +337,13 @@ def update_dos():
 		df = pd.DataFrame(missingMaterials, columns = ['ID', 'Energies', 'Densities', 'efermi'])
 		df.to_csv('dos.csv', mode='a', header=False)
 
+def display_space_group(material_id):
+	with MPRester(API_KEY) as mpr:
+		s = mpr.get_structure_by_material_id(material_id)
+		spa = SpacegroupAnalyzer(s, symprec=0.1) 
+		print(spa.get_point_group_symbol())
+		print(spa.get_space_group_number())
+		print(spa.get_space_group_symbol())
 
 if __name__ == '__main__':
-
-	analyze_candidates()
+	display_space_group("mp-775157")
