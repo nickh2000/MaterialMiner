@@ -1,0 +1,7 @@
+
+In this	document, we collect a list of materials that we will look at closely. This means doing	a literature search for	refined band structures	or performing them ourselves.
+
+Material ID  Formula
+
+mp-27734     CrBr3
+

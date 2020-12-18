@@ -179,6 +179,14 @@ class DosData:
     def verify_magnetic(self): 
         
         return any(map(abs, self.structure.site_properties["magmom"])) #returns true if magnetic moment is present 
+    
+    def get_nonmagnetic_structure(self, make_primitive: bool = True): 
+        structure = self.structure.copy()
+        structure.remove_site_property("magmom")
+        if make_primitive:
+            structure = structure.get_primitive_structure(self.material_id)
+            return structure #returns a non-magnetic material
+
 
 
 #https://stackoverflow.com/questions/15579649/python-dict-to-numpy-structured-array
