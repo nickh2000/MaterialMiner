@@ -74,8 +74,6 @@ def analyze_candidates():
 			plt.ylabel(DOS.get_formula())
 			plt.show()
 
-
-
 #function that collects and stores the DOS of all materials in a CSV file
 def compile_dos():
 	with open('database.txt', 'r') as d:
@@ -340,7 +338,7 @@ def update_dos():
 def display_space_group(material_id):
 	with MPRester(API_KEY) as mpr:
 		s = mpr.get_structure_by_material_id(material_id)
-		spa = SpacegroupAnalyzer(s, symprec=0.1) 
+		spa = symmetry.analyzer.SpacegroupAnalyzer(s, symprec=0.1) 
 		print(spa.get_point_group_symbol())
 		print(spa.get_space_group_number())
 		print(spa.get_space_group_symbol())
