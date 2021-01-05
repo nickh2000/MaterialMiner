@@ -66,8 +66,10 @@ def cosine_similarity(x, y):
 
 	ratio_similarity = x['Ratios'] == y['Ratios']
 	
-	x = np.concatenate(([x[3]/118.0], [int(ratio_similarity)], x[5:].values))
-	y = np.concatenate(([y[3]/118.0], [1], y[5:].values))
+	x = np.concatenate(([x['Heaviest Element']/118.0], [int(ratio_similarity)], x[5:].values))
+
+	#we give matching elemental ratios a weight of .3
+	y = np.concatenate(([y['Heaviest Element']/118.0], [.01], y[5:].values))
 
 	x = np.array(x)
 	y = np.array(y)
@@ -75,7 +77,7 @@ def cosine_similarity(x, y):
 	x.reshape(1, -1)
 	y.reshape(1, -1)
 	
-	return np.dot(x, y) / (np.sqrt(x.dot(x) * y.dot(y)))
+	return 1 - np.dot(x, y) / (np.sqrt(x.dot(x) * y.dot(y)))
 
 def curate_data(): 
 	columns = ['ID', 'Formula', "Heaviest Element", 'Ratios', 'Group 1', 'Group 2', 'Group 3', 'Group 4', 'Group 5', 'Group 6', 'Group 7', 'Group 8', 'Transition Metals', 'Lanthanides', 'Actinides']
@@ -161,19 +163,19 @@ def compute_similarities():
 	df = pd.DataFrame(similarity_matrix)
 	df.to_csv('similarity.csv')
 
+
 def find_elbow_point():
 	df = pd.read_csv('candidates.csv', index_col = 0)
-	df.drop(['ID', 'Formula', 'Ratios'], axis=1, inplace=True)
+	df.drop(['ID', 'Formula', 'Ratios', 'Cluster'], axis=1, inplace=True)
 	X = df
 	X['Heaviest Element'] /= 118.0
 	
-
 	cs = []
-	for i in range(1, 11):
+	for i in range(1, 20):
 	    kmeans = KMeans(n_clusters = i, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
 	    kmeans.fit(X)
 	    cs.append(kmeans.inertia_)
-	plt.plot(range(1, 11), cs)
+	plt.plot(range(1, 20), cs)
 	plt.title('The Elbow Method')
 	plt.xlabel('Number of clusters')
 	plt.ylabel('CS')
@@ -182,37 +184,35 @@ def find_elbow_point():
 def kmeans_cluster():
 
 	df = pd.read_csv('candidates.csv', index_col = 0)
-	df.drop(['ID', 'Formula', 'Ratios'], axis=1, inplace=True)
+	df.drop(['ID', 'Formula', 'Ratios', 'Cluster'], axis=1, inplace=True)
 
-	X = df
 	
-	X['Heaviest Element'] /= 118.0
+	df['Heaviest Element'] /= 118
 
-	kmeans = KMeans(n_clusters=2,random_state=0)
+	X = df.values	
+	
+	kmeans = KMeans(n_clusters=3,random_state=0)
 
 	kmeans.fit(X)
 
-	print(kmeans.cluster_centers_)
+	columns = ["Heaviest Element", 'Group 1', 'Group 2', 'Group 3', 'Group 4', 'Group 5', 'Group 6', 'Group 7', 'Group 8', 'Transition Metals', 'Lanthanides', 'Actinides']
+	df = pd.DataFrame(kmeans.cluster_centers_, columns = columns)
+	df.to_csv('kmeans_clusters.csv', index_label = False)
 
 def cosine_cluster():
 	df = pd.read_csv('similarity.csv', index_col = 0)
 	mat = df.values
 
-	spectral = SpectralClustering(2, affinity = 'precomputed')
-	df = pd.DataFrame(spectral.fit_predict(mat))
-	df.to_csv('cluster.csv')
-
-
+	spectral = SpectralClustering(4, affinity = 'precomputed')
+	cluster = spectral.fit_predict(mat)
+	
 	#add cluster labels to csv file
-	cluster = pd.read_csv('cluster.csv', index_col = 0).to_numpy()
-	cluster = cluster.T[0]
 	df = pd.read_csv('candidates.csv', index_col = 0)
 	df['Cluster'] = cluster
-	print(df[:10])
-
 	df.to_csv('candidates.csv', index_label = False)
 
 
 
 if __name__ == '__main__':
-
+	
+	cosine_cluster()
