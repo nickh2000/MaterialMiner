@@ -11,13 +11,45 @@ import sklearn
 import matplotlib.pyplot as plt # for data visualization
 import seaborn as sns # for statistical data visualization
 import os
-
+import chemparse
 
 
 
 API_KEY = 'UgRqoHkuZyJEVX2d'
 
 
+
+def parse_formula(formula):
+	elements  = chemparse.parse_formula(formula)
+	for element in list(elements.keys()):
+		if len(element) > 2:
+			correct_elements = parse_segment(element)
+			elements.pop(element)
+			for elem in correct_elements:
+				elements[elem] = correct_elements[elem]
+
+	return elements
+
+
+
+def parse_segment(segment):
+
+
+	elems = {}
+	currentElem = ''
+	for i, char in enumerate(segment):
+		if char.isdigit():
+			elems[currentElem] = int(char)
+			currentElem = ''
+		elif char.isupper():
+			if i != 0:
+				elems[currentElem] = 1
+			currentElem = char
+		else: 
+			currentElem += char
+	if len(currentElem) > 0:
+		elems[currentElem] = 1
+	return elems
 
 
 def elements_in_candidates():
@@ -33,7 +65,7 @@ def elements_in_candidates():
 	with open("database.txt") as f:
 
 		materials = [material.rstrip() for material in f.readlines()]
-		response = MPRester(API_KEY).query(criteria={'task_id': {'$in': list(materials)}}, properties=['elements', 'pretty_formula', 'task_id'])
+		response = MPRester(API_KEY).query(criteria={'task_id': {'$in': list(materials)}}, properties=['pretty_formula', 'task_id'])
 
 		for i, material in enumerate(response):
 			if not i % 100: 
@@ -45,9 +77,9 @@ def elements_in_candidates():
 			newEntry['ID'] = material['task_id']
 			newEntry['Formula'] = material['pretty_formula']
 
-			elements = material['elements']
-			for element in elements:
-				newEntry[element] += 1
+			elements = parse_formula(material['pretty_formula'])
+			for element, num in elements.items():
+				newEntry[element] += num
 
 			newEntry['Is_Candidate'] = int(material['task_id'] in candidates)
 
