@@ -80,8 +80,8 @@ class DosData:
     #outputs a density of states for energies within the defined bounds
     def center_dos(self, upper_band, lower_band):
 
-        start_energy_index = find_nearest_energy(self.energies, lower_band, False)
-        end_energy_index = find_nearest_energy(self.energies, upper_band, True)
+        start_energy_index = find_nearest_index(self.energies, lower_band, False)
+        end_energy_index = find_nearest_index(self.energies, upper_band, True)
 
         return {energy: self.dos_array[energy] for energy in self.energies[start_energy_index:end_energy_index]}
 
@@ -115,11 +115,11 @@ class DosData:
 
     def get_bounds(self):
 
-        fermi_index = find_nearest_energy(self.energies, 0, 1)
+        fermi_index = find_nearest_index(self.energies, 0, 1)
 
-        max_index = find_nearest_energy(self.energies, max_bound, 0)
+        max_index = find_nearest_index(self.energies, max_bound, 0)
 
-        min_index = find_nearest_energy(self.energies, -max_bound, 2)
+        min_index = find_nearest_index(self.energies, -max_bound, 2)
         
         upper_width = max_bound
         lower_width = -max_bound
@@ -196,7 +196,7 @@ class DosData:
 
 
 #https://stackoverflow.com/questions/15579649/python-dict-to-numpy-structured-array
-def find_nearest_energy(array, value, round_up = 0):
+def find_nearest_index(array, value, round_up = 0):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     
