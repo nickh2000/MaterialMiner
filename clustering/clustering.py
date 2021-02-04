@@ -116,11 +116,13 @@ def get_ratio(parsed_formula):
 
 	return ratio
 
+
+#find the distance between two candidates
 def candidate_distance(x, y):
 	weights = [1/118.0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, .01, 1, 1]
 
 	#1 if ratios are the same, zero otherwise
-	ratio_similarity = int(x['Ratios'] == y['Ratios'])
+	ratio_distance = int(x['Ratios'] != y['Ratios'])
 	ratio_weight = 0
 	
 	curve_weight = .3
@@ -136,7 +138,7 @@ def candidate_distance(x, y):
 	x.reshape(1, -1)
 	y.reshape(1, -1)
 	
-	return 1 - np.dot(x, y) / (np.sqrt(x.dot(x) * y.dot(y))) - ratio_weight*ratio_similarity
+	return 1 - np.dot(x, y) / (np.sqrt(x.dot(x) * y.dot(y))) + ratio_weight*ratio_distance
 
 def curate_data(): 
 	os.chdir('..')
