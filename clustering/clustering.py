@@ -217,7 +217,6 @@ def curate_data():
 			print(f'{i} Computed entries')
 	
 
-
 	df = pd.DataFrame(data)
 	materials= df['ID'].values
 	df.set_index('ID', inplace=True, drop=False)
@@ -232,7 +231,7 @@ def curate_data():
 				df.loc[material, 'efermi'] = row['efermi']
 		print(c)
 
-	duds = df[ df['Energies'] == "0"].index
+	duds = df[ df['Energies'] == 0].index
 	df.drop(duds, inplace = True)
 
 	df.to_csv('clustering/fesm_candidates.csv', mode='a', header=False)
