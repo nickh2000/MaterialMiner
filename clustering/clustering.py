@@ -150,11 +150,13 @@ def curate_data():
 
 	#setup headers
 	df = pd.DataFrame(columns = columns)
-	df.to_csv('clustering/candidates.csv')
+	df.to_csv('clustering/fesm_candidates.csv')
 
-	candidates = [m.rstrip() for m in open('candidates.txt', 'r').readlines()]
+	candidates = [m.rstrip() for m in open('fesm-cluster-candidates.txt', 'r').readlines()]
+	candidates = [candidate[1:] for candidate in candidates]
+	formulas = MPRester(API_KEY).query(criteria={'task_id': {'$in': candidates}, "has_bandstructure": True}, properties=['pretty_formula', 'task_id', 'spacegroup'])
+	
 
-	formulas = MPRester(API_KEY).query(criteria={'task_id': {'$in': candidates}}, properties=['pretty_formula', 'task_id', 'spacegroup'])
 	data = []
 
 	for i, entry in enumerate(formulas):
@@ -230,18 +232,26 @@ def curate_data():
 				df.loc[material, 'efermi'] = row['efermi']
 		print(c)
 
-	df.to_csv('clustering/candidates.csv', mode='a', header=False)
+	duds = df[ df['Energies'] == "0"].index
+	df.drop(duds, inplace = True)
+
+	df.to_csv('clustering/fesm_candidates.csv', mode='a', header=False)
 
 def compute_distances():
 
-	df = pd.read_csv('candidates.csv')
+	df = pd.read_csv('fesm_candidates.csv')
+
+	duds = df[ df['Energies'] == "0"].index
+	df.drop(duds, inplace = True)
 
 	curve_weight = .3
 	num_candidates = len(df.values)
 	
+	
 	similarity_matrix = np.zeros((num_candidates, num_candidates))
 
-	for i, row in df.iterrows(): 
+	for i, (index, row) in enumerate(df.iterrows()): 
+		
 		elem_similarity = []
 		
 		for j in np.arange(i, num_candidates):
@@ -261,7 +271,7 @@ def compute_distances():
 	similarity_matrix += reflection
 
 	df = pd.DataFrame(similarity_matrix)
-	df.to_csv('similarity.csv')
+	df.to_csv('fesm_similarity.csv')
 
 
 def find_elbow_point():
@@ -300,19 +310,19 @@ def kmeans_cluster():
 	df.to_csv('kmeans_clusters.csv', index_label = False)
 
 def spectral_cluster():
-	df = pd.read_csv('similarity.csv', index_col = 0)
+	df = pd.read_csv('fesm_similarity.csv', index_col = 0)
 	mat = df.values
 
 	spectral = SpectralClustering(4, affinity = 'precomputed')
 	cluster = spectral.fit_predict(mat)
 	
 	#add cluster labels to csv file
-	df = pd.read_csv('candidates.csv', index_col = 0)
+	df = pd.read_csv('fesm_candidates.csv', index_col = 0)
 	df['Cluster'] = cluster
-	df.to_csv('candidates.csv', index_label = False)
+	df.to_csv('fesm_candidates.csv', index_label = False)
 
 
 
 if __name__ == '__main__':
-	compute_distances()
+	spectral_cluster()
 	

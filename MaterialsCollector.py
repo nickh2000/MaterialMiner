@@ -311,29 +311,34 @@ def update_dos():
 		missing = {m: True for m in materials}
 		
 
-		for chunk in reader:
+		for c, chunk in enumerate(reader):
 			for i, material in enumerate(materials):
 
 				if missing[material]:
 					missing[material] = not (material in list(chunk['ID']))
+			print(c)
 		
 		missingMaterials = []
 		for k, v in missing.items():
 			if v:
-
-				r = requests.get(f'https://www.materialsproject.org/rest/v2/materials/{material}/vasp/dos?API_KEY={API_KEY}')
+				print(k)
+				r = requests.get(f'https://www.materialsproject.org/rest/v2/materials/{k}/vasp/dos?API_KEY={API_KEY}')
 				r = r.json()['response'][0]['dos']
 
-				#get different properties of the DOS array
-				energies =list(r['energies'])
-				densities = list(r['densities']['1'])
-				efermi = r['efermi']
+				if r:
+					#get different properties of the DOS array
+					energies =list(r['energies'])
+					densities = list(r['densities']['1'])
+					efermi = r['efermi']
 
-				missingMaterials.append([material, energies, densities, efermi])
+					missingMaterials.append([k, energies, densities, efermi])
 
+					if not len(missingMaterials) % 1000:
+						df = pd.DataFrame(missingMaterials, columns = ['ID', 'Energies', 'Densities', 'efermi'])
+						df.to_csv('dos.csv', mode='a', header=False)
+						missingMaterials = []
 
-		df = pd.DataFrame(missingMaterials, columns = ['ID', 'Energies', 'Densities', 'efermi'])
-		df.to_csv('dos.csv', mode='a', header=False)
+		
 
 def display_space_group(material_id):
 	with MPRester(API_KEY) as mpr:
@@ -344,4 +349,4 @@ def display_space_group(material_id):
 		print(spa.get_space_group_symbol())
 
 if __name__ == '__main__':
-	display_space_group("mp-775157")
+	update_dos()
