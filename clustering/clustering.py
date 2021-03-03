@@ -153,7 +153,7 @@ def curate_data():
 	df.to_csv('clustering/fesm_candidates.csv')
 
 	candidates = [m.rstrip() for m in open('fesm-cluster-candidates.txt', 'r').readlines()]
-	candidates = [candidate[1:] for candidate in candidates[:int(len(candidates)/2)]]
+	candidates = [candidate[1:] for candidate in candidates[:100]]
 
 	formulas = MPRester(API_KEY).query(criteria={'task_id': {'$in': candidates}, "has_bandstructure": True}, properties=['pretty_formula', 'task_id', 'spacegroup'])
 	
@@ -319,8 +319,6 @@ def spectral_cluster():
 	df = pd.read_csv('fesm_candidates.csv', index_col = 0)
 	df['Cluster'] = cluster
 	df.to_csv('fesm_candidates.csv', index_label = False)
-
-
 
 if __name__ == '__main__':
 	compute_distances()
