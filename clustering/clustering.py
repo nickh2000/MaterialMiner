@@ -126,12 +126,11 @@ def candidate_distance(x, y):
 	ratio_weight = 0
 	
 	curve_weight = .3
-	x = np.concatenate(([x['Heaviest Element']], x[5:19].values))
+	x = np.concatenate(([x['Heaviest Element']], x[4:18].values))
 
 	#do the same with the other candidate, ratio similarity is given a weight of zero
-	y = np.concatenate(([y['Heaviest Element']], y[5:19].values))
+	y = np.concatenate(([y['Heaviest Element']], y[4:18].values))
 
-	
 	x = np.multiply(np.array(x), weights)
 	y = np.multiply(np.array(y), weights)
 
@@ -320,8 +319,69 @@ def spectral_cluster():
 	df['Cluster'] = cluster
 	df.to_csv('fesm_candidates.csv', index_label = False)
 
+
+def curve_distance_test():
+	df = pd.read_csv('fesm_candidates.csv')
+
+	duds = df[ df['Energies'] == "0"].index
+	df.drop(duds, inplace = True)
+
+	curve_weight = .3
+	num_candidates = len(df.values)
+	
+	
+	similarity_matrix = np.zeros((num_candidates, num_candidates))
+
+	for i, (index, row) in enumerate(df.iterrows()): 
+		
+		elem_similarity = []
+		
+		for j in np.arange(i, num_candidates):
+			#Get DOS objects for two candidates
+
+			x = row
+			y = df.iloc[j]
+
+			DIST = curve_distance(x, y)
+			
+			x_dos = DosData(x)
+			y_dos = DosData(y)
+			x_dos.plot_dos(2, -2)
+			y_dos.plot_dos(2, -2)
+			print(DIST)
+
+def cosine_distance_test():
+	df = pd.read_csv('fesm_candidates.csv')
+
+	duds = df[ df['Energies'] == "0"].index
+	df.drop(duds, inplace = True)
+
+	curve_weight = .3
+	num_candidates = len(df.values)
+	
+	
+	similarity_matrix = np.zeros((num_candidates, num_candidates))
+
+	for i, (index, row) in enumerate(df.iterrows()): 
+		
+		elem_similarity = []
+		
+		for j in np.arange(i, num_candidates):
+			#Get DOS objects for two candidates
+
+			x = row
+			y = df.iloc[j]
+
+			print(x)
+			print(y)
+
+			DIST = candidate_distance(x, y)
+			
+			
+			print(DIST)
+			b = input('hi')
+
 if __name__ == '__main__':
-	compute_distances()
-	spectral_cluster()
+	cosine_distance_test()
 	
 	
