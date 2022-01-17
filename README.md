@@ -4,7 +4,8 @@ The Northeastern University and University of Texas Condensed Matter Group is in
 
 
   ![alt text](https://github.com/nickh2000/MaterialMiner/blob/main/visualization.png?raw=true)
-    Prevalence of topological insulators by band-width and band-isolation
+   
+   Prevalence of topological insulators by band-width and band-isolation
     
     
     
