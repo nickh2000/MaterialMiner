@@ -5,3 +5,6 @@ The Northeastern University and University of Texas Condensed Matter Group is in
 
 <a href="visualizer.png">
 <a href="periodic.png">
+
+  ![alt text](https://github.com/nickh2000/MaterialMiner/blob/main/visualizer.png?raw=true)
+  ![alt text](https://github.com/nickh2000/MaterialMiner/blob/main/periodic.png?raw=true)
